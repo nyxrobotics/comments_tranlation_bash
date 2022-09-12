@@ -13,10 +13,11 @@ do
     do
         # Translate when comment-out contains double-byte characters
         if LANG=C grep -q -n -v '^[[:cntrl:][:print:]]*$' <<< "$single_comment" ; then
-            raw_escape=$(echo $single_comment | sed -e 's/[]\/$*.^[]/\\&/g' | sed -e 's/"/\"/g' | sed -e "s/'/\'/g")
-            en_escape=$(echo $(trans -brief -no-warn -no-ansi zh-CN:en $raw_escape))
+            raw_escape=$(echo "$single_comment" | sed -e 's/[]\/$*.^[]/\\&/g' | sed -e 's/"/\"/g' | sed -e "s/'/\'/g")
+            raw_format=$(echo "$single_comment" | sed -e 's#//#// #g' | sed -e 's/[]\/$*.^[]/\\&/g' | sed -e 's/"/\"/g' | sed -e "s/'/\'/g")
+            en_escape=$(echo $(trans -brief -no-warn -no-ansi zh-CN:en "$raw_format"))
             sed -i -z "s/$raw_escape/$en_escape/g" $i
-            echo -e $raw_escape "\n<<translated>>\n" $en_escape "\n-----"
+            echo -e "$raw_escape" "\n<<translated>>\n" "$en_escape" "\n-----"
         fi
     done < $i.comments # Translate all comment-outs
 
@@ -27,8 +28,9 @@ do
     do
         # Translate when comment-out contains double-byte characters
         if LANG=C grep -q -n -v '^[[:cntrl:][:print:]]*$' <<< "$single_comment" ; then
-            raw_escape=$(echo "$single_comment" | sed -e 's/[]\/$*.^[]/\\&/g' | sed 's/"/\"/g' | sed "s/'/\'/g")
-            en_escape=$(echo $(trans -brief -no-warn -no-ansi zh-CN:en "$raw_escape"))
+            raw_escape=$(echo "$single_comment" | sed -e 's/[]\/$*.^[]/\\&/g' | sed -e 's/"/\"/g' | sed -e "s/'/\'/g")
+            raw_format=$(echo "$single_comment" | sed -e 's#/\*#/\* #g'| sed -e 's#\*/# \*/ #g' | sed -e 's/[]\/$*.^[]/\\&/g' | sed 's/"/\"/g' | sed "s/'/\'/g")
+            en_escape=$(echo $(trans -brief -no-warn -no-ansi zh-CN:en "$raw_format"))
             sed -i -z "s/$raw_escape/$en_escape/g" $i
             echo -e "$raw_escape" "\n<<translated>>\n" "$en_escape" "\n-----"
         fi
