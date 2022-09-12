@@ -26,5 +26,5 @@ do
             echo -e $raw_escape "\n<<translated>>\n" ${en_escape^} "\n-----"
         fi
     done < $i.comments # Translate all comment-outs
-    # rm $i.comments
+    rm $i.comments
 done
