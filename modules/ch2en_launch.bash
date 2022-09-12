@@ -18,14 +18,13 @@ do
     awk '/<!--/,/-->/' $i.comments > tmp && mv tmp $i.comments
     while read single_comment;
     do
-        raw_format=$(echo $single_comment | sed -e 's/ *$//g;s/<!--//g;s/-->//g;s/[]\/$*.^[]/\\&/g')
         # Translate when comment-out contains double-byte characters
-        if LANG=C grep -q -n -v '^[[:cntrl:][:print:]]*$' <<< $raw_format ; then
-            en_escape=$(echo $(trans -brief -no-warn -no-ansi zh-CN:en $raw_format))
-            raw_escape=$(echo $single_comment | sed -e 's/[]\/$*.^[]/\\&/g')
-            sed -i -z "s/$raw_escape/<!-- ${en_escape^} -->/g" $i
+        if LANG=C grep -q -n -v '^[[:cntrl:][:print:]]*$' <<< "$single_comment" ; then
+            raw_escape=$(echo "$single_comment" | sed -e 's/[]\/$*.^[]/\\&/g')
+            en_escape=$(echo $(trans -brief -no-warn -no-ansi zh-CN:en "$raw_escape"))
+            sed -i -z "s/$raw_escape/$en_escape/g" $i
             echo -e $raw_escape "\n<<translated>>\n" ${en_escape^} "\n-----"
         fi
     done < $i.comments # Translate all comment-outs
-    rm $i.comments
+    # rm $i.comments
 done
