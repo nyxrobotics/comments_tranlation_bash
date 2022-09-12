@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Translate C++ files
-for i in $(find ./ -name '*.cpp')
+for i in $(find ./ -name '*.cpp' -o -name '*.c' -o -name '*.hpp' -o -name '*.h')
 do
     echo "found" $i
     IFS=$'\n' # Ignore newline characters
